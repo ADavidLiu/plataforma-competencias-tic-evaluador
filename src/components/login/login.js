@@ -14,8 +14,7 @@ class Login extends Component {
         super();
         this.state = {
             usuario: "",
-            contrasenia: "",
-            didSubmit: false
+            contrasenia: ""
         }
     }
 
@@ -26,22 +25,12 @@ class Login extends Component {
         });
     }
 
-    login = e => {
+    enviarInformacion = e => {
         e.preventDefault();
-        console.log("Conectarse al backend");
-
-        /* If success */
-        this.setState({
-            didSubmit: true
-        });
-        this.props.actualizarLogeado(true);
+        this.props.revisarInformacion(this.state);
     }
 
     render() {
-        if (this.state.didSubmit && this.props.isLogeado) {
-            return <Redirect to="/" />;
-        }
-
         return (
 			<div className="mb-2 col-md-6 offset-md-3 col-xl-4 offset-xl-4">
 				<Typography
@@ -57,7 +46,7 @@ class Login extends Component {
 				>
 					<Grid container>
 						<Grid item xs={12}>
-                            <form onSubmit={this.login}>
+                            <form onSubmit={this.enviarInformacion}>
                                 <TextField
                                     variant="outlined"
                                     margin="normal"
@@ -92,9 +81,6 @@ class Login extends Component {
                                     Ingresar
                                 </Button>
                             </form>
-                            {/* <Link to="/registro">
-                                <Typography variant="body2" className="mt-3" color="primary">¿Aún no tiene cuenta? Regístrese aquí.</Typography>
-                            </Link> */}
 						</Grid>
 					</Grid>
 				</FormControl>

@@ -5,6 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import PrivateRoute from "../privateRoute/privateRoute";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
@@ -16,22 +17,22 @@ import ExitToApp from '@material-ui/icons/ExitToApp';
 import Login from "../login/login";
 import Dashboard from "../dashboard/dashboard";
 import Pagina404 from "../pagina404/pagina404";
+import Practica from "../practica/practica";
 
 class LoginCheck extends Component {
     constructor() {
         super();
 
-        /* Aquí se debe verificar el login del usuario */
-
         this.state = {
-            isLogeado: false,
-            id: "evaluador-1",
+            isLogeado: true,
+            id: "",
             datosPerfil: {}
         }
     }
 
     componentDidMount = () => {
-        /* Conectarse al backend para obtener los datos personales del evaluador */
+        /* Aquí se debe verificar el login inicial del usuario */
+        /* Sino, conectarse al backend para obtener los datos personales del evaluador */
         this.setState({
             datosPerfil: {
                 nombre: "John Doe",
@@ -40,9 +41,21 @@ class LoginCheck extends Component {
         });
     }
 
-    actualizarLogeado = nuevoEstado => {
+    revisarInformacion = data => {
+        /* Conectarse al backend para chequear si se logeó bien */
+
+        /* if true */
         this.setState({
-            isLogeado: nuevoEstado
+            isLogeado: true,
+            id: "evaluador-1"
+        });
+    }
+
+    logout = () => {
+        this.setState({
+            isLogeado: false,
+            id: "",
+            datosPerfil: {}
         });
     }
 
@@ -63,7 +76,7 @@ class LoginCheck extends Component {
                                         </IconButton>
                                     </Link>
                                     <Link to="/">
-                                        <IconButton style={{ color: "#ffffff" }} edge="start" onClick={() => this.actualizarLogeado(false)}>
+                                        <IconButton style={{ color: "#ffffff" }} edge="start" onClick={this.logout}>
                                             <ExitToApp />
                                         </IconButton>
                                     </Link>
@@ -75,7 +88,7 @@ class LoginCheck extends Component {
                             <Toolbar>
                                 <Typography variant="h6" color="inherit">Plataforma de competencias TIC</Typography>
                             </Toolbar>
-                        </AppBar>       
+                        </AppBar>
                     )
                 }
                 <Container component="main">
@@ -83,13 +96,20 @@ class LoginCheck extends Component {
                         <Switch>
                             <Route path="/" exact render={(...routeProps) => {
                                 if (this.state.isLogeado) {
-                                    return <Dashboard {...routeProps} actualizarLogeado={this.actualizarLogeado} userID={this.state.id} />;
+                                    return <Dashboard {...routeProps} userID={this.state.id} />;
                                 } else {
-                                    return <Login {...routeProps} actualizarLogeado={this.actualizarLogeado} isLogeado={this.state.isLogeado} />
+                                    return <Login {...routeProps} isLogeado={this.state.isLogeado} userID={this.state.id} revisarInformacion={this.revisarInformacion} />
                                 }
                             }} />
-                            <Route path="/login/" render={(...routeProps) => <Login {...routeProps} actualizarLogeado={this.actualizarLogeado} isLogeado={this.state.isLogeado} />} />
-                            <Route path="/dashboard/" render={(...routeProps) => <Dashboard {...routeProps} actualizarLogeado={this.actualizarLogeado} userID={this.state.id} />} />
+                            {
+                                this.state.isLogeado ? (
+                                    <React.Fragment>
+                                        <Route path="/login/" render={(...routeProps) => <Login {...routeProps} isLogeado={this.state.isLogeado} userID={this.state.id} revisarInformacion={this.revisarInformacion} />} />
+                                        <Route path="/dashboard/" render={(...routeProps) => <Dashboard {...routeProps} userID={this.state.id} />} />
+                                        <Route path="/practica/" render={(...routeProps) => <Practica {...routeProps} userID={this.state.id} />} />
+                                    </React.Fragment>
+                                ) : ""
+                            }
                             <Route component={Pagina404} />
                         </Switch>
                     </div>
