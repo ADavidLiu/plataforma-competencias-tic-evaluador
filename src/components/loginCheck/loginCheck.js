@@ -5,7 +5,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
-import PrivateRoute from "../privateRoute/privateRoute";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
@@ -18,6 +17,8 @@ import Login from "../login/login";
 import Dashboard from "../dashboard/dashboard";
 import Pagina404 from "../pagina404/pagina404";
 import Practica from "../practica/practica";
+import Entrevista from "../entrevista/entrevista";
+import Preentrevista from "../preentrevista/preentrevista";
 
 class LoginCheck extends Component {
     constructor() {
@@ -35,6 +36,7 @@ class LoginCheck extends Component {
         /* Sino, conectarse al backend para obtener los datos personales del evaluador */
         this.setState({
             datosPerfil: {
+                id: "evaluador-1",
                 nombre: "John Doe",
                 imgSrc: ""
             }
@@ -47,7 +49,11 @@ class LoginCheck extends Component {
         /* if true */
         this.setState({
             isLogeado: true,
-            id: "evaluador-1"
+            id: "evaluador-1",
+            datosPerfil: {
+                nombre: "John Doe",
+                imgSrc: ""
+            }
         });
     }
 
@@ -103,11 +109,14 @@ class LoginCheck extends Component {
                             }} />
                             {
                                 this.state.isLogeado ? (
-                                    <React.Fragment>
+                                    <Switch>
                                         <Route path="/login/" render={(...routeProps) => <Login {...routeProps} isLogeado={this.state.isLogeado} userID={this.state.id} revisarInformacion={this.revisarInformacion} />} />
                                         <Route path="/dashboard/" render={(...routeProps) => <Dashboard {...routeProps} userID={this.state.id} />} />
                                         <Route path="/practica/" render={(...routeProps) => <Practica {...routeProps} userID={this.state.id} />} />
-                                    </React.Fragment>
+                                        <Route path="/entrevista/" render={(...routeProps) => <Entrevista {...routeProps} userID={this.state.id} />} />
+                                        <Route path="/preentrevista/" render={(...routeProps) => <Preentrevista {...routeProps} userID={this.state.id} />} />
+                                        <Route component={Pagina404} />
+                                    </Switch>
                                 ) : ""
                             }
                             <Route component={Pagina404} />
